@@ -68,7 +68,7 @@
 <a href="#v3"><span class="d">6 Nov</span><div><strong>v3. Uneven blink</strong><span>47 k on one half. The long on-time belongs to the other side.</span></div></a>
 <a href="#v4"><span class="d">6 Nov</span><div><strong>v4. The ring</strong><span>Current build. Three LEDs, one at a time. Parts, map, triage, netlist.</span></div></a>
 <a href="#timing"><span class="d">7 Nov</span><div><strong>The 0.69 constant is wrong here</strong><span>Two-transistor blinker only. The LED moves the timing.</span></div></a>
-<a href="#power"><span class="d">8 Nov</span><div><strong>5 V kills the ring</strong><span>7.6 mA a LED. Arduino 5 V and 3.3 V are not a supply for v4.</span></div></a>
+<a href="#power"><span class="d">9 Nov</span><div><strong>5 V: the sim and the board disagree</strong><span>7.6 mA a LED. My sim parks at 5.3 V. The real board runs on 5 V.</span></div></a>
 </nav>
 
 <article class="post" id="v1">
@@ -120,7 +120,7 @@
 <tr><td>3</td><td>100 &micro;F electrolytic</td><td>16 V or more. The stripe marks the <b>negative</b> leg, and the negative leg goes toward the base.</td></tr>
 <tr><td>1</td><td>breadboard</td><td>40 columns is enough. 63 is comfortable.</td></tr>
 <tr><td>~20</td><td>jumper wires</td><td>18 for the circuit, 2 for power.</td></tr>
-<tr><td>1</td><td>9 V battery + clip</td><td>9 V only. Not an Arduino 5 V or 3.3 V pin. See the note on power below.</td></tr>
+<tr><td>1</td><td>9 V battery + clip</td><td>9 V in the simulation. The real board runs from the Arduino 5 V pin, so either is worth trying. See the note on power below.</td></tr>
 </table>
 <p class="small" style="font-size:14px;color:var(--dim)">Substitutions that work: 560 &Omega; or 470 &Omega; for the 1 k&Omega; (LEDs get brighter, nothing dies). 22 k&Omega; or 33 k&Omega; for the 10 k&Omega; (slower, still runs). Not 47 k&Omega;. That one goes dark. Any cap between 10 and 1000 &micro;F will shift the speed, not the logic.</p>
 
@@ -900,10 +900,12 @@ wrdata v4.txt v(4) v(5) v(6)
 </article>
 
 <article class="post" id="power">
-<p class="when">8 Nov 2026 &middot; correction</p>
-<h2 id="power-h">5 V is not fine.</h2>
+<p class="when">9 Nov 2026 &middot; correction</p>
+<h2 id="power-h">5 V: my simulation and the real board disagree.</h2>
 
-<p>9 V is what the simulation used. Peak current is 7.6 mA per LED, not 15. The ring still laps at 5.5 V and goes dark at 5.0 V and below, so 5 V and 3.3 V off an Arduino are not a working supply for this build. Do not chase a wiring fault if you powered it that way. The rate does move with voltage: 1.52 s a lap at 9 V, about 1.33 s at 6 V. Measured on the netlist at the bottom, start scaled inside the rail, 2026-11-08.</p>
+<p>9 V is what the simulation used. Peak current is 7.6 mA per LED, not 15. On the netlist at the bottom the ring still laps at 5.5 V and parks at 5.3 V and below. A harder start kick does not rescue it, so that is not a startup artefact in the model.</p>
+
+<p>But the only real board of this build has never run on 9 V at all. It has only ever been on the Arduino 5 V pin, and it chases there. So my model is stricter than the hardware at 5 V and I do not yet know why. Two things I would check before believing either side: the actual voltage on the 5 V pin under load, and the LED forward drop at 7 mA, since the whole margin at low rail is the collector's high level. If your build goes dark on 5 V, that is a real difference and worth telling me. Do not go looking for a wiring fault on my word alone. The rate does move with voltage: 1.52 s a lap at 9 V, about 1.33 s at 6 V.</p>
 
 </article>
 
