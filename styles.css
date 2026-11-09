@@ -148,5 +148,9 @@ article.card h3:first-of-type{margin-top:22px}
   body.cardmode .wrap > *:not(#card){display:none!important}
   body.cardmode #card{border:0;padding:0;margin:0;background:#fff}
   body.cardmode .printbtn{display:none!important}
-  body.cardmode{font-size:12.5px}
+  body.cardmode{font-size:11.6px}
+  body.cardmode #card h3{margin-top:15px;margin-bottom:5px}
+  body.cardmode #card p{margin:5px 0}
+  body.cardmode #card>*:last-child{font-size:11.5px!important;margin-top:10px!important}
+  body.cardmode #card ul.check li,body.cardmode #card ol.check li{margin-bottom:5px}
 }
