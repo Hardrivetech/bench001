@@ -128,3 +128,25 @@ td,th{padding:9px 12px}
   pre{font-size:12px;padding:13px}
 }
 @media print{table{font-size:11.5px}tbody tr:nth-child(even){background:#fff}}
+
+/* --- parts delta table + printable build card --- */
+table.delta td:first-child{white-space:nowrap}
+table.delta td:first-child a{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+ul.check,ol.check{list-style:none;padding-left:0;margin-left:0}
+ul.check li,ol.check li{position:relative;padding-left:28px;margin:0 0 8px}
+ul.check li::before{content:"";position:absolute;left:0;top:.42em;width:13px;height:13px;
+  border:1.5px solid #b9ac97;border-radius:3px}
+ol.check{counter-reset:c}
+ol.check li::before{counter-increment:c;content:counter(c);position:absolute;left:0;top:.06em;
+  width:18px;height:18px;border:1.5px solid #b9ac97;border-radius:50%;
+  font:11px/16px ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;color:var(--dim)}
+.printbtn{margin-left:0}
+article.card h3:first-of-type{margin-top:22px}
+@media print{
+  body.cardmode header.bar,body.cardmode footer.site{display:none!important}
+  body.cardmode .wrap{padding:0}
+  body.cardmode .wrap > *:not(#card){display:none!important}
+  body.cardmode #card{border:0;padding:0;margin:0;background:#fff}
+  body.cardmode .printbtn{display:none!important}
+  body.cardmode{font-size:12.5px}
+}
