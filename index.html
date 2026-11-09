@@ -15,6 +15,7 @@
 <a class="k" href="#v2">v2</a>
 <a class="k" href="#v3">v3</a>
 <a class="k" href="#v4">v4</a>
+<a class="k" href="#v5">v5</a>
 <a href="#timing">Timing</a>
 <a href="#power">5 V</a>
 </nav>
@@ -24,13 +25,14 @@
 <div class="wrap" id="top">
 
 <h1>A blinker with no chip in it.</h1>
-<p class="lede">One circuit, written down as it changed. Read it top to bottom. If you only want to build the current one, jump to v4.</p>
+<p class="lede">One circuit, written down as it changed. Read it top to bottom. If you only want to build the current one, jump to v5. If you want the one a person has actually held, that is v4.</p>
 
 <nav class="index">
 <a href="#v1"><span class="d">6 Nov</span><div><strong>v1. Two transistors, two LEDs</strong><span>The one that was built and photographed. 1.27 s.</span></div></a>
 <a href="#v2"><span class="d">6 Nov</span><div><strong>v2. Speed, no pot</strong><span>One series resistor and a jumper. 1.2 s to 6.8 s. 100 k stops it.</span></div></a>
 <a href="#v3"><span class="d">6 Nov</span><div><strong>v3. Uneven blink</strong><span>47 k on one half. The long on-time belongs to the other side.</span></div></a>
-<a href="#v4"><span class="d">6 Nov</span><div><strong>v4. The ring</strong><span>Current build. Three LEDs, one at a time. Parts, map, triage, netlist.</span></div></a>
+<a href="#v4"><span class="d">6 Nov</span><div><strong>v4. The ring</strong><span>Built and photographed. Three LEDs, one at a time. Parts, map, triage, netlist.</span></div></a>
+<a href="#v5"><span class="d">9 Nov</span><div><strong>v5. A speed setting</strong><span>Two 10 k and a jumper. 1.52 s to 2.97 s. 30 k and it parks. Simulated, not yet built.</span></div></a>
 <a href="#timing"><span class="d">7 Nov</span><div><strong>The 0.69 constant is wrong here</strong><span>Two-transistor blinker only. The LED moves the timing.</span></div></a>
 <a href="#power"><span class="d">9 Nov</span><div><strong>5 V: the sim and the board disagree</strong><span>7.6 mA a LED. My sim parks at 5.3 V. The real board runs on 5 V.</span></div></a>
 </nav>
@@ -67,7 +69,7 @@
 </article>
 
 <article class="post" id="v4">
-<p class="when">6 Nov 2026, corrected 8 Nov &middot; v4, current build</p>
+<p class="when">6 Nov 2026, corrected 8 Nov &middot; v4, the build that exists on a real board</p>
 <h2>The ring. One LED at a time.</h2>
 <p>Build this one. Everything above it is how it got here. Everything in this post is enough to assemble it: parts, drawing, breadboard, the numbers, and what to do when it sits there doing nothing.</p>
 <h2>What it is</h2>
@@ -842,7 +844,81 @@ wrdata v4.txt v(4) v(5) v(6)
 <p>Two gotchas if you try to reproduce this. The <code>.ic</code> line is not optional: without an unbalanced start the ring sits at a symmetric operating point and never breaks symmetry, so it looks like a bad topology when it is only a missing nudge. And count threshold crossings yourself rather than trusting <code>.meas</code>, which miscounts near the switching point.</p>
 
 <h2>What is next</h2>
-<p>Next is a photo of this ring on a real board. v2 already has the speed trick, and it was for the two-transistor blinker, not this ring. If you build v4 before that photo exists, yours is the one that counts.</p>
+<p>v5 is next: a speed setting for this ring that uses two 10 k and a jumper, both already in the drawer. It is simulated and written up below. This build, the one on this page, is still the only version that has been on a real board. If you build v4 before anything else exists, yours is the one that counts.</p>
+
+</article>
+
+<article class="post" id="v5">
+<p class="when">9 Nov 2026 &middot; v5, simulated, not yet on a board</p>
+<h2>A speed setting you can change with a jumper.</h2>
+<p>v2 got a speed control with no potentiometer, but that trick belonged to the two-transistor blinker. Trying the same thing on the ring fails. A resistor in series with the cap stops the chase dead: I simmed it at 47 k and 100 k with the 100 &micro;F caps and nothing lights at all. Blocking the edge blocks the coupling, and the coupling is the whole circuit.</p>
+<p>The resistor that works is somewhere else. Put it in the base's own path to ground, so each base sees 10 k plus the extra. That lengthens the lit time instead of the gap. Three stages, one extra resistor per base, and the jumper shorts it when you want the fast setting.</p>
+
+<h2>Parts to add</h2>
+<table>
+<tr><th>Qty</th><th>Part</th><th>Why</th></tr>
+<tr><td>3</td><td>10 k&Omega;</td><td>Second one under each base, in series with the one v4 already has.</td></tr>
+<tr><td>1</td><td>3-pin header, or nothing at all</td><td>Short the three extra resistors with a jumper for fast. Pull it for slow. Two jumper wires and a spare strip works; a header is just tidier.</td></tr>
+</table>
+
+<h2>Measured, at 9 V, 100 &micro;F</h2>
+<table>
+<tr><th>Extra R under each base</th><th>One LED lit</th><th>One full trip</th><th>Duty</th></tr>
+<tr><td>0 (jumper in, this is v4)</td><td>0.44 s</td><td>1.52 s</td><td>28.7%</td></tr>
+<tr><td>10 k</td><td>0.55 s</td><td>2.23 s</td><td>24.8%</td></tr>
+<tr><td>20 k (both 10 k)</td><td>0.64 s</td><td>2.97 s</td><td>21.6%</td></tr>
+<tr><td>30 k</td><td colspan="3">parks. Nothing chases.</td></tr>
+<tr><td>47 k</td><td colspan="3">parks. Nothing chases.</td></tr>
+</table>
+<p>So the honest range is 1.52 s to 2.97 s, about two to one, and then it stops. Not a smooth dial. The stop at 30 k is the same kind of ceiling v2 hit at 100 k: the base cannot be pulled down hard enough to keep the stage switching, so the ring settles instead of chasing. Slow has a limit and it is current.</p>
+<p>All of that is from the netlist at the bottom of this post. If you build it, the numbers you get will be within a cap tolerance of these, and the park point will move with your transistors.</p>
+
+<h2>Parts at the edge of their tolerance</h2>
+<p>The reason to sim this instead of only building it: sweep the parts to the worst end of their bands and see whether the thing still runs. A junk-drawer 100 &micro;F is often 80 &micro;F. Cheap resistors are 5% off.</p>
+<table>
+<tr><th>Setting</th><th>Parts at the wrong end</th><th>Cycle</th><th>Duty</th></tr>
+<tr><td>jumper in (v4)</td><td>100 &micro;F &minus;20%, resistors &minus;5%</td><td>1.22 s</td><td>28.8%</td></tr>
+<tr><td>jumper in (v4)</td><td>100 &micro;F +80%, resistors +5%</td><td>2.74 s</td><td>28.7%</td></tr>
+<tr><td>both 10 k (slow)</td><td>caps &minus;20%, resistors &minus;5%</td><td>2.29 s</td><td>22.1%</td></tr>
+<tr><td>both 10 k (slow)</td><td>caps +80%, resistors +5%</td><td>5.51 s</td><td>20.7%</td></tr>
+</table>
+<p>It still strides in all four. The speed moves by more than two to one across the cap band, which is the most useful thing on this page: if your ring runs slower than mine, that is a capacitor, not a fault. The duty stays put at each setting, so the logic of the chase does not care how far off the parts are.</p>
+
+<h2>The netlist, slow setting</h2>
+<p>Same ring, with the second resistor drawn in and no jumper. Delete the <code>Rj</code> line and you are back at v4.</p>
+<pre>* BENCH 001 v5: ring with 20k in each base-to-ground path
+Vcc 1 0 9
+Q1 4 2 0 QN
+Q2 5 3 0 QN
+Q3 6 7 0 QN
+D1 1 10 DL
+Rl1 10 4 1k
+D2 1 11 DL
+Rl2 11 5 1k
+D3 1 12 DL
+Rl3 12 6 1k
+R1 2 30 10k          ; base 1, first 10k
+Rj1 30 0 10k         ; base 1, second 10k. Jumper across this for fast.
+R2 3 31 10k
+Rj2 31 0 10k
+R3 7 32 10k
+Rj3 32 0 10k
+C1 4 3 100u
+C2 5 7 100u
+C3 6 2 100u
+.model QN NPN(IS=1e-14 BF=200)
+.model DL D(IS=1e-14 N=1.8 RS=10)
+.options method=gear reltol=1e-3
+.ic V(2)=0.7 V(3)=0 V(7)=0 V(4)=0.2 V(5)=8.4 V(6)=8.4
+.control
+tran 0.002 20 0 uic
+wrdata v5.txt v(4) v(5) v(6)
+.endc
+.end</pre>
+<p>Measured off that run with a threshold at 2.0 V on the collector, counted in python rather than with <code>.meas</code>, because <code>.meas</code> miscounts near the switching point.</p>
+
+<h2>What this is not</h2>
+<p>It is not on a board. Nobody has built v5. Every number above is a simulation of the netlist printed above it, and the only version that has run on real copper is v4. If you build v5 and it parks at the slow setting, or it does not park at all, that is a real data point and worth more than my sim.</p>
 
 </article>
 
@@ -890,6 +966,7 @@ wrdata v4.txt v(4) v(5) v(6)
 <li><a href="#v2">v2 &middot; speed, no pot</a></li>
 <li><a href="#v3">v3 &middot; uneven blink</a></li>
 <li><a href="#v4">v4 &middot; the ring</a></li>
+<li><a href="#v5">v5 &middot; a speed setting</a></li>
 <li><a href="#timing">The 0.69 constant</a></li>
 <li><a href="#power">5 V correction</a></li>
 </ul>
@@ -900,6 +977,7 @@ wrdata v4.txt v(4) v(5) v(6)
 <li><a href="https://github.com/Hardrivetech/bench001">Source on GitHub</a></li>
 <li><a href="https://github.com/Hardrivetech/bench001#readme">README: what this page is and how it is built</a></li>
 <li><a href="#v4">Parts list and netlist</a></li>
+<li><a href="#v5">v5 parts and netlist</a></li>
 <li><a href="#top">Back to top</a></li>
 </ul>
 </div>
