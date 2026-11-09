@@ -81,4 +81,16 @@
       }
     });
   });
+
+  // 4. print only the build card, not the whole log
+  var pbtn = document.getElementById('printcard');
+  if (pbtn) {
+    pbtn.addEventListener('click', function () {
+      document.body.classList.add('cardmode');
+      var clean = function () { document.body.classList.remove('cardmode'); };
+      addEventListener('afterprint', clean, { once: true });
+      setTimeout(clean, 4000);
+      window.print();
+    });
+  }
 })();
