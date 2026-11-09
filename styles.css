@@ -103,3 +103,28 @@ nav.sections a.on{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px va
 .copybtn:hover{color:var(--ink);border-color:#c9bba6}
 .copybtn.ok{color:var(--green);border-color:var(--green)}
 @media print{#pbar,.copybtn{display:none}}
+
+/* --- typography + table polish --- */
+body{font-feature-settings:"kern" 1,"liga" 1;text-rendering:optimizeLegibility}
+a{color:var(--blue);text-decoration-thickness:1px;text-underline-offset:2px}
+a:hover{color:#0b4fc4}
+p a{text-decoration:underline}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:3px}
+h2{position:relative;padding-top:2px}
+h2+p,h2+table,h2+figure,h2+pre,h2+ul,h2+ol{margin-top:0}
+table{font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th{background:#f3ecdf;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr:nth-child(even){background:#fdfaf4}
+tbody tr:hover{background:#fbf3e4}
+td,th{padding:9px 12px}
+.stat b,.mono,pre{font-variant-numeric:tabular-nums}
+.card table,.fig table{border:0}
+@media (max-width:640px){
+  .wrap{padding:28px 16px 0}
+  h1{font-size:26px}
+  h2{font-size:17.5px;margin-top:38px}
+  table{font-size:13.5px}
+  th,td{padding:7px 8px}
+  pre{font-size:12px;padding:13px}
+}
+@media print{table{font-size:11.5px}tbody tr:nth-child(even){background:#fff}}
