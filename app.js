@@ -41,9 +41,9 @@
   }, { passive: true });
   spy();
 
-  // 3. one copy button on the netlist, so nobody retypes it
-  var pre = document.querySelector('pre');
-  if (pre) {
+  // 3. a copy button on every netlist, so nobody retypes it
+  var pres = document.querySelectorAll('pre');
+  Array.prototype.forEach.call(pres, function (pre) {
     var row = document.createElement('div');
     row.className = 'netlist-head';
     pre.parentNode.insertBefore(row, pre);
@@ -80,5 +80,5 @@
         document.body.removeChild(ta);
       }
     });
-  }
+  });
 })();
