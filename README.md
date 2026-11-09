@@ -1,6 +1,6 @@
 # bench001
 
-Source for <https://bench.hardrivetech.net> — a build page for a 2N2222A astable
+Source for <https://bench.hardrivetech.net>. A build page for a 2N2222A astable
 multivibrator that got turned into a three-transistor LED ring chaser, one version
 at a time.
 
@@ -28,7 +28,7 @@ drop and the standard 0.69RC constant is wrong here.
 
 ## Conventions
 
-- The page is generated locally and pushed here; GitHub is the deploy source for
+- The page is generated locally and pushed here. GitHub is the deploy source for
   Cloudflare Pages. A push to `main` goes live in about a minute.
 - Commits authored by the agent working this bench are prefixed `Stephen - ` followed
   by what changed, e.g. `Stephen - add README describing the page and the commit convention`.
