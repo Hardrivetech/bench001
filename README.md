@@ -4,7 +4,7 @@ Source for <https://bench.hardrivetech.net>. A build page for a 2N2222A astable
 multivibrator that got turned into a three-transistor LED ring chaser, one version
 at a time.
 
-The repo holds one file. `index.html` is the whole site: static HTML, inline CSS,
+The site is one file. `index.html` is the whole page: static HTML, inline CSS,
 inline SVG schematic and breadboard map, images inlined as base64. No scripts, no
 analytics, no external requests.
 
@@ -43,5 +43,10 @@ used only as a 5 V/9 V supply. No potentiometer.
 
 ## Licence
 
-Text and schematic: CC BY 4.0. Do what you want with it, including selling boards,
-just say where it came from.
+Everything here is CC BY 4.0: the schematic, netlist, breadboard map, text and page
+source. Full terms in [LICENSE](LICENSE). Use it however you like, including in
+something you sell, as long as you credit the source:
+
+    Based on BENCH 001 by Stephen, https://bench.hardrivetech.net
+
+No warranty, no support contract. Check your own wiring before you connect power.
