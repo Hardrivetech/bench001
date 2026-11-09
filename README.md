@@ -4,9 +4,16 @@ Source for <https://bench.hardrivetech.net>. A build page for a 2N2222A astable
 multivibrator that got turned into a three-transistor LED ring chaser, one version
 at a time.
 
-The site is one file. `index.html` is the whole page: static HTML, inline CSS,
-inline SVG schematic and breadboard map, images inlined as base64. No scripts, no
-analytics, no external requests.
+The site is three files, no build step, no dependencies:
+
+- `index.html` — the page: static HTML, inline SVG schematic and breadboard map,
+  images inlined as base64
+- `styles.css` — all the styling
+- `app.js` — about 80 lines of vanilla JS: a reading progress bar, the current
+  section highlighted in the top nav, and a copy button on the netlist
+
+No analytics, no cookies, no localStorage, no network calls, no external requests.
+Open `index.html` from disk and it works the same as on the domain.
 
 ## What's on the page
 
