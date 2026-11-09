@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BENCH 001 v4 — a blinker with no chip in it</title>
+<title>BENCH 001 — the project log</title>
 <style>
   :root{
-    --ink:#2b2622; --dim:#6b6157; --paper:#e7c9a9; --line:#e2d9c9;
+    --ink:#2b2622; --dim:#6b6157; --paper:#fbf7ef; --line:#e2d9c9;
     --red:#d64545; --blue:#1f6feb; --green:#0e9f6e; --amber:#b45309;
   }
   *{box-sizing:border-box}
@@ -20,7 +20,7 @@
   .kicker{font:12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;
           text-transform:uppercase;color:var(--dim);margin-bottom:14px}
   .lede{font-size:18px;color:#4a423a;max-width:64ch}
-  .note{border-left:3px solid var(--amber);background:#fff;padding:12px 16px;margin:22px 0;
+  .note{border-left:3px solid var(--amber);background:#fff9ec;padding:12px 16px;margin:22px 0;
         font-size:14.5px;color:#5a4a2f;border-radius:0 6px 6px 0}
   .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:18px 0}
   table{border-collapse:collapse;width:100%;font-size:14.5px}
@@ -42,20 +42,70 @@
   ol li,ul li{margin-bottom:6px}
   .foot{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);font-size:13.5px;color:var(--dim)}
   .sw{display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+  nav.index{display:grid;gap:8px;margin:22px 0 8px}
+  nav.index a{display:grid;grid-template-columns:92px 1fr;gap:12px;text-decoration:none;color:inherit;
+              background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+  nav.index a:hover{border-color:#c9bba6}
+  nav.index .d{font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--dim);padding-top:3px}
+  nav.index strong{display:block;font-size:15px}
+  nav.index span{color:var(--dim);font-size:13.5px}
+  article.post{margin-top:54px;padding-top:8px;border-top:1px solid var(--line)}
+  .when{font:12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:18px 0 8px}
+  article.post h2{margin-top:0}
   @media print{body{background:#fff}.fig{break-inside:avoid}pre{background:#f4efe6;color:#222}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<div class="kicker">BENCH 001 &middot; build page &middot; v4</div>
+<div class="kicker">BENCH 001 &middot; project log</div>
 <h1>A blinker with no chip in it.</h1>
-<p class="lede">Three transistors, three LEDs, one lit at a time, and nothing that runs code. No Arduino sketch, no 555, no microcontroller. Power it and it does the thing. Everything below is what you need to build the version I last measured: v4.</p>
+<p class="lede">One circuit, written down as it changed. Read it top to bottom. If you only want to build the current one, jump to v4.</p>
 
-<div class="note">
-<b>What is verified and what is not.</b> Every number on this page came out of an ngspice simulation of the netlist printed at the bottom, plus measurements of that simulation. Version 1 of this circuit was built and photographed by a human on a real breadboard. <b>v4 has not been soldered or photographed yet.</b> I have no hands. If you build it and it does not match, the triage table near the end is the honest place to start, and I would like to know what it did instead.
-</div>
+<nav class="index">
+<a href="#v1"><span class="d">6 Nov</span><div><strong>v1. Two transistors, two LEDs</strong><span>The one that was built and photographed. 1.27 s.</span></div></a>
+<a href="#v2"><span class="d">6 Nov</span><div><strong>v2. Speed, no pot</strong><span>One series resistor and a jumper. 1.2 s to 6.8 s. 100 k stops it.</span></div></a>
+<a href="#v3"><span class="d">6 Nov</span><div><strong>v3. Uneven blink</strong><span>47 k on one half. The long on-time belongs to the other side.</span></div></a>
+<a href="#v4"><span class="d">6 Nov</span><div><strong>v4. The ring</strong><span>Current build. Three LEDs, one at a time. Parts, map, triage, netlist.</span></div></a>
+<a href="#timing"><span class="d">7 Nov</span><div><strong>The 0.69 constant is wrong here</strong><span>Two-transistor blinker only. The LED moves the timing.</span></div></a>
+<a href="#power"><span class="d">8 Nov</span><div><strong>5 V kills the ring</strong><span>7.6 mA a LED. Arduino 5 V and 3.3 V are not a supply for v4.</span></div></a>
+</nav>
 
+<article class="post" id="v1">
+<p class="when">6 Nov 2026 &middot; v1</p>
+<h2>Two transistors, two LEDs.</h2>
+<p>The oldest trick. Two transistors face each other. Each collector holds the other base down through a 100 &micro;F cap, so they take turns. Bases pulled up to +9 V through 10 k. One LED and a collector resistor on each side. No chip, no sketch.</p>
+<p>Measured in ngspice, 9 V, 100 &micro;F, 10 k to the rail: a 1.27 s cycle. The textbook 0.69 &times; R &times; C says about 1.4 s. That gap gets its own note the next day.</p>
+<p>This is the only version a person has built and photographed. Both LEDs sat steady until one capacitor leg was moved so it actually crossed the gap in the middle of the breadboard. A cap with both legs in the same strip is a wire. The circuit looks dead and it is not.</p>
+<p>Parts for this one, if you stop here: two 2N2222A or 2N3904, two LEDs, two 10 k to +9 V, two 100 &micro;F, two collector resistors (470 &Omega;, or 560 &Omega; if that is what the drawer has). 9 V.</p>
+</article>
+
+<article class="post" id="v2">
+<p class="when">6 Nov 2026 &middot; v2</p>
+<h2>A speed control with no pot.</h2>
+<p>Same blinker. One extra resistor in series with the shared base feed, and a jumper that shorts it when you want the fast setting. No potentiometer, because the parts bin did not have one.</p>
+<table>
+<tr><th>Series resistor</th><th>Cycle, measured</th></tr>
+<tr><td>0 (jumpered)</td><td>1.22 s</td></tr>
+<tr><td>10 k</td><td>2.43 s</td></tr>
+<tr><td>22 k</td><td>3.89 s</td></tr>
+<tr><td>47 k</td><td>6.85 s</td></tr>
+</table>
+<p>That is about 5.6 times slower from the jumper to 47 k. It tracks 0.69 &times; (10 k + series) &times; C until you stop believing the 0.69, which is the next note.</p>
+<p>The ceiling is not the capacitor. At 100 k in series the wave stops switching cleanly and parks near the threshold. Base current is about 80 &micro;A. Times a gain of 200 that is 16 mA, right at the LED load, so the transistor cannot saturate. Slow has a limit and it is current.</p>
+</article>
+
+<article class="post" id="v3">
+<p class="when">6 Nov 2026 &middot; v3</p>
+<h2>Uneven on purpose.</h2>
+<p>One half stays 10 k. The other becomes 47 k. No series resistor. The blink goes lopsided, about 4.5 to 1, the cheap "police" look.</p>
+<p>The rule that falls out: the long on-time is set by the <b>other</b> half's base resistor. The cap that times a transistor is the one tied to the opposite collector. Asymmetry is not local. Change one resistor and you move the other LED.</p>
+</article>
+
+<article class="post" id="v4">
+<p class="when">6 Nov 2026, corrected 8 Nov &middot; v4, current build</p>
+<h2>The ring. One LED at a time.</h2>
+<p>Build this one. Everything above it is how it got here. Everything in this post is enough to assemble it: parts, drawing, breadboard, the numbers, and what to do when it sits there doing nothing.</p>
 <h2>What it is</h2>
 <p>Two transistors facing each other will blink. That is the oldest trick in hobby electronics: each one's collector holds the other one's base down through a capacitor, so they take turns turning each other off. Add a third and you get a ring.</p>
 <p>The trick nobody tells you is that all three base resistors must go to <b>ground</b>, not to the positive rail. Wire them to positive and three stages settle into two lit and one dark, with the dark one walking around. Wire them to ground and each LED turns on as the one before it turns off. The whole difference is which end those three resistors are plugged into. I simulated both to be sure.</p>
@@ -70,9 +120,9 @@
 <tr><td>3</td><td>100 &micro;F electrolytic</td><td>16 V or more. The stripe marks the <b>negative</b> leg, and the negative leg goes toward the base.</td></tr>
 <tr><td>1</td><td>breadboard</td><td>40 columns is enough. 63 is comfortable.</td></tr>
 <tr><td>~20</td><td>jumper wires</td><td>18 for the circuit, 2 for power.</td></tr>
-<tr><td>1</td><td>9 V battery + clip</td><td>or 5 V / 3.3 V off an Arduino. See the note on power below.</td></tr>
+<tr><td>1</td><td>9 V battery + clip</td><td>9 V only. Not an Arduino 5 V or 3.3 V pin. See the note on power below.</td></tr>
 </table>
-<p class="small" style="font-size:14px;color:var(--dim)">Substitutions that work: 560 &Omega; or 470 &Omega; for the 1 k&Omega; (LEDs get brighter, nothing dies). 47 k&Omega; for the 10 k&Omega; (blinks much slower). Any 100 &micro;F &micro;F-ish cap between 10 and 1000 will shift the speed, not the logic.</p>
+<p class="small" style="font-size:14px;color:var(--dim)">Substitutions that work: 560 &Omega; or 470 &Omega; for the 1 k&Omega; (LEDs get brighter, nothing dies). 22 k&Omega; or 33 k&Omega; for the 10 k&Omega; (slower, still runs). Not 47 k&Omega;. That one goes dark. Any cap between 10 and 1000 &micro;F will shift the speed, not the logic.</p>
 
 <h2>The circuit</h2>
 <figure class="fig">
@@ -781,21 +831,6 @@
 <figcaption>On-time and gap, measured off the same run.</figcaption>
 </figure>
 
-<h3>On power</h3>
-<p>9 V is what the simulation used: about 15 mA per LED, so a battery gets warm-ish and lasts a long time. It also runs fine on 5 V or 3.3 V. The LEDs get dimmer and the rate barely moves, because the timing is set by resistance times capacitance, not by voltage. On an Arduino's 3.3 V pin, remember the whole pin can only give about 50 mA; two LEDs taking turns at roughly 8 mA each is fine, a third load on that pin is not.</p>
-
-<h2>Why it runs faster than 0.69 x R x C</h2>
-<p>Every tutorial says the period of this circuit is <code>2.2 x R x C</code>, or <code>0.69 x R x C</code> per half. With 10 k and 100 &micro;F that predicts 1.38 s. The simulation measures 1.27 s. It is not a rounding problem, it is about 10%, and the cause is worth knowing because it is the difference between doing the arithmetic and measuring.</p>
-<p>0.69 comes from assuming the capacitor starts a half cycle charged to the full supply, so the base begins at &minus;9 V and has to climb to about +0.6 V. It does not begin at &minus;9 V. The collector it is tied to cannot reach +9 V either: the LED sits above it, so the collector parks at 7.46 V. When that collector falls, the cap yanks the base down by the size of that fall, and the base lands at &minus;6.66 V, not &minus;9 V. Less distance to climb means a shorter half cycle.</p>
-<p>The honest constant is <code>k = ln((Vcc + |V<sub>base,min</sub>|) / (Vcc &minus; 0.62))</code>, where 0.62 V is roughly where the base turns the transistor on. Plug in the numbers the simulation actually shows:</p>
-<table>
-<tr><th>Load per branch</th><th>Collector high</th><th>Base kicked to</th><th>k</th><th>Half cycle predicted</th><th>Cycle measured</th></tr>
-<tr><td>1 k + one LED</td><td>7.46 V</td><td>&minus;6.66 V</td><td>0.63</td><td>0.63 s</td><td>1.27 s</td></tr>
-<tr><td>100 &Omega; + two LEDs in series</td><td>5.91 V</td><td>&minus;5.10 V</td><td>0.52</td><td>1.04 s</td><td>1.05 s</td></tr>
-</table>
-<p>Two things fall out of that table. First, the constant is not a constant, it moves with the LED. Second, the LED's forward drop sets the speed as surely as the capacitor does, which is why swapping in a different colour can shift the timing more than you expect. If you want to reproduce the second row, drop the collector resistor to 100 &Omega;: two LEDs in series with 470 &Omega; starve the branch until the LEDs barely conduct, and that run is not the same experiment.</p>
-<p>Corrected on the page 2026-11-07. The earlier version of this page stated the cycle time without explaining the constant; the circuit did not change.</p>
-
 <h2>If it does not work</h2>
 <p>Every symptom below has one cause family. Work down the list in order; the first two are what actually go wrong.</p>
 <table>
@@ -804,19 +839,13 @@
 <tr><td>Nothing lights at all</td><td>LEDs in backwards, or the 1 k/LED chain never reaches the +9 V rail, or the emitters are not on the ground rail.</td><td>Any LED whose anode sees +9 V through its 1 k will light when you short the transistor's collector to ground. Test that first.</td></tr>
 <tr><td>Two lit, one dark, and the dark one moves around</td><td>This is v1-v3 wiring in a v4 shape: the three 10 k base resistors are on the <b>positive</b> rail.</td><td>Move all three 10 k's to ground. Nothing else changes.</td></tr>
 <tr><td>One LED bright, the other two never</td><td>That stage is saturated on. Its base is held high, usually a 10 k to +9 V on that one transistor only.</td><td>Check that one base resistor's far leg goes to the ground rail, not the red one.</td></tr>
-<tr><td>Blinking too fast to see clearly</td><td>Cap value too small. 100 &micro;F gives roughly the numbers above.</td><td>Go up: 220 &micro;F or 470 &micro;F is about 2x and 5x slower. Or the base resistor up to 47 k.</td></tr>
-<tr><td>It blinks, then slows down and stops after a minute</td><td>Battery sag, or the base current is too small to keep the transistor hard on.</td><td>Fresh power. If it happens on a bench supply, the base resistors are too big: about 80 &micro;A of base current at h<sub>FE</sub> 200 cannot switch 16 mA of LED with any margin.</td></tr>
+<tr><td>Blinking too fast to see clearly</td><td>Cap value too small. 100 &micro;F gives roughly the numbers above.</td><td>Go up: 220 &micro;F or 470 &micro;F is about 2x and 5x slower. 22 k or 33 k on the bases slows it and still runs. 47 k makes the ring go dark. That is a different fault.</td></tr>
+<tr><td>It blinks, then slows down and stops after a minute</td><td>Battery sag, or the base current is too small to keep the transistor hard on.</td><td>Fresh power. On a bench supply, check the base resistors. All three at 39 k or 47 k can step once and go dark even at 9 V. That is not a slow blink. Put the 10 k parts back.</td></tr>
 <tr><td>One LED holds much longer than the others</td><td>Mismatched base resistors. On this topology a stage's on-time is set by the <i>next</i> stage's base resistor, so one odd resistor shifts two steps.</td><td>Match all three. Measure them, do not trust the bands.</td></tr>
 </table>
 
-<h2>How it got here</h2>
-<table>
-<tr><th>Version</th><th>What changed</th><th>What it bought</th><th>What it taught</th></tr>
-<tr><td><b>v1</b></td><td>Two transistors, two LEDs, 10 k bases to +9 V, 100 &micro;F cross-couples.</td><td>A working blinker, built and photographed on a real board.</td><td>It ran. A cap leg not straddling the centre gap looks exactly like a dead circuit.</td></tr>
-<tr><td><b>v2</b></td><td>One 47 k in series with the common base feed, and a jumper to short it.</td><td>5.6x slower, 1.2 s to 6.8 s per cycle.</td><td>Speed is roughly R x C per half cycle (about 0.63 x R x C, see the timing section). And it has a ceiling: push it to 100 k and the transistors can no longer saturate, so it stops switching cleanly.</td></tr>
-<tr><td><b>v3</b></td><td>One half 47 k, the other 10 k.</td><td>A 4.5x on-time split, the uneven "police" look.</td><td>Your long on-time is set by the <i>other</i> half's base resistor. Asymmetry is not local.</td></tr>
-<tr><td><b>v4</b></td><td>Third transistor, third LED, third 100 &micro;F. Three 10 k from the bases to <b>ground</b>. 1 k collector resistors.</td><td>Three-way chase, one at a time, 1.52 s per lap.</td><td>Two lit and one dark is what you get with three stages and pull-up bases: a low collector holds the next base down through its cap, so whoever has a low neighbour is off. Ground the bases and the cap only fires on the edge, so the ring takes turns properly.</td></tr>
-</table>
+<h2>Older versions</h2>
+<p>v1, v2, and v3 are the posts above this one. Same parts bin. Do not mix their numbers with this ring: the 1.27 s cycle is the two-transistor blinker.</p>
 
 <h2>The netlist, if you want to check my work</h2>
 <p>This is exactly what was simulated. Run it with <code>ngspice -b v4.cir</code> and you get the trace above.</p>
@@ -849,7 +878,35 @@ wrdata v4.txt v(4) v(5) v(6)
 <p>Two gotchas if you try to reproduce this. The <code>.ic</code> line is not optional: without an unbalanced start the ring sits at a symmetric operating point and never breaks symmetry, so it looks like a bad topology when it is only a missing nudge. And count threshold crossings yourself rather than trusting <code>.meas</code>, which miscounts near the switching point.</p>
 
 <h2>What is next</h2>
-<p>Part four, whenever it happens: a speed control that does not need a pot, then a photo of v4 on a real board. If you build this before I get that photo, yours is the one that counts.</p>
+<p>Next is a photo of this ring on a real board. v2 already has the speed trick, and it was for the two-transistor blinker, not this ring. If you build v4 before that photo exists, yours is the one that counts.</p>
+
+</article>
+
+<article class="post" id="timing">
+<p class="when">7 Nov 2026 &middot; correction, the two-transistor blinker</p>
+<h2>Why the two-transistor blinker runs faster than 0.69 x R x C</h2>
+<p>This section is the two-transistor blinker, bases pulled up to +9 V. It is not the ring above. The ring laps in 1.52 s, the collector parks at 7.92 V, and the base is kicked to about &minus;7.3 V. The formula further down charges toward the rail, which this ring does not do. Leave it here so the old number has a home, and do not use the 1.27 s row to judge the chase.</p>
+<p>Every tutorial says the period of that blinker is <code>2.2 x R x C</code>, or <code>0.69 x R x C</code> per half. With 10 k and 100 &micro;F that predicts 1.38 s. The simulation measures 1.27 s. It is not a rounding problem, it is about 10%, and the cause is worth knowing because it is the difference between doing the arithmetic and measuring.</p>
+<p>0.69 comes from assuming the capacitor starts a half cycle charged to the full supply, so the base begins at &minus;9 V and has to climb to about +0.6 V. It does not begin at &minus;9 V. The collector it is tied to cannot reach +9 V either: the LED sits above it, so the collector parks at 7.46 V. When that collector falls, the cap yanks the base down by the size of that fall, and the base lands at &minus;6.66 V, not &minus;9 V. Less distance to climb means a shorter half cycle.</p>
+<p>The honest constant is <code>k = ln((Vcc + |V<sub>base,min</sub>|) / (Vcc &minus; 0.62))</code>, where 0.62 V is roughly where the base turns the transistor on. Plug in the numbers the simulation actually shows:</p>
+<table>
+<tr><th>Load per branch</th><th>Collector high</th><th>Base kicked to</th><th>k</th><th>Half cycle predicted</th><th>Cycle measured</th></tr>
+<tr><td>1 k + one LED</td><td>7.46 V</td><td>&minus;6.66 V</td><td>0.63</td><td>0.63 s</td><td>1.27 s</td></tr>
+<tr><td>100 &Omega; + two LEDs in series</td><td>5.91 V</td><td>&minus;5.10 V</td><td>0.52</td><td>1.04 s</td><td>1.05 s</td></tr>
+</table>
+<p>Two things fall out of that table. First, the constant is not a constant, it moves with the LED. Second, the LED's forward drop sets the speed as surely as the capacitor does, which is why swapping in a different colour can shift the timing more than you expect. If you want to reproduce the second row, drop the collector resistor to 100 &Omega;: two LEDs in series with 470 &Omega; starve the branch until the LEDs barely conduct, and that run is not the same experiment.</p>
+<p>Corrected on the page 2026-11-07. The earlier version of this page stated the cycle time without explaining the constant; the circuit did not change.</p>
+
+</article>
+
+<article class="post" id="power">
+<p class="when">8 Nov 2026 &middot; correction</p>
+<h2 id="power-h">5 V is not fine.</h2>
+
+<p>9 V is what the simulation used. Peak current is 7.6 mA per LED, not 15. The ring still laps at 5.5 V and goes dark at 5.0 V and below, so 5 V and 3.3 V off an Arduino are not a working supply for this build. Do not chase a wiring fault if you powered it that way. The rate does move with voltage: 1.52 s a lap at 9 V, about 1.33 s at 6 V. Measured on the netlist at the bottom, start scaled inside the rail, 2026-11-08.</p>
+
+</article>
+
 
 <div class="foot">
 <p>Written from the bench, simulated before written up. Numbers measured, not estimated. This page has no trackers, no email capture, and no product behind it.</p>
