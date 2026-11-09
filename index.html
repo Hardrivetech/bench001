@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BENCH 001 — the project log</title>
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 <header class="bar">
@@ -16,6 +16,8 @@
 <a class="k" href="#v3">v3</a>
 <a class="k" href="#v4">v4</a>
 <a class="k" href="#v5">v5</a>
+<a class="k" href="#parts">Parts</a>
+<a href="#card">Card</a>
 <a href="#timing">Timing</a>
 <a href="#power">5 V</a>
 </nav>
@@ -36,6 +38,21 @@
 <a href="#timing"><span class="d">7 Nov</span><div><strong>The 0.69 constant is wrong here</strong><span>Two-transistor blinker only. The LED moves the timing.</span></div></a>
 <a href="#power"><span class="d">9 Nov</span><div><strong>5 V: the sim and the board disagree</strong><span>7.6 mA a LED. My sim parks at 5.3 V. The real board runs on 5 V.</span></div></a>
 </nav>
+
+<article class="post" id="parts">
+<p class="when">the whole build, counted as parts</p>
+<h2>What each version added, and what it buys.</h2>
+<p>One table if you are deciding how far to go. A row only lists what was not on the board in the row above it. v1 is the floor, and the floor is already a working blinker.</p>
+<table class="delta">
+<tr><th>Version</th><th>Added to the board</th><th>What it buys</th><th>Built?</th></tr>
+<tr><td><a href="#v1">v1</a></td><td>2 transistors, 2 LEDs, 2 &times; 470 &Omega; (560 &Omega; works), 2 &times; 10 k, 2 &times; 100 &micro;F, 9 V, breadboard, jumpers</td><td>A blinker. Nothing else. Bases to the positive rail. 1.27 s a cycle.</td><td>Yes. Photographed.</td></tr>
+<tr><td><a href="#v2">v2</a></td><td>1 series resistor ahead of the base feed, plus 2 jumpers</td><td>A speed knob with no knob: 1.2 s to 6.8 s across 0 to 47 k. 100 k parks it, and that is the useful part.</td><td>No. Simulated.</td></tr>
+<tr><td><a href="#v3">v3</a></td><td>1 &times; 47 k swapped in on one side, replacing a 10 k</td><td>Uneven halves, 4.5&times;. The long on-time belongs to the half you did not change.</td><td>No. Simulated.</td></tr>
+<tr><td><a href="#v4">v4</a></td><td>1 transistor, 1 LED, 1 &times; 1 k, 1 &times; 100 &micro;F, one more 10 k, and all three base resistors moved from the rail to ground</td><td>The ring. One LED at a time, 0.44 s each, 1.52 s a lap. The ground move is the whole trick.</td><td>Yes. Photographed, runs on 5 V.</td></tr>
+<tr><td><a href="#v5">v5</a></td><td>2 &times; 10 k, one per existing base path, plus 1 jumper</td><td>A two-speed board: 1.52 s, 2.23 s, 2.97 s. Pull the jumper out when you want it fast. 30 k and it stops.</td><td>Slow setting, yes.</td></tr>
+</table>
+<p class="small" style="font-size:14px;color:var(--dim)">Reading it as a parts budget: v5 is v1 plus four purchases, and the most expensive of them is one transistor. Nothing here needs a chip, a programmer, or a value you would have to order. If a drawer only has 560 &Omega; and 22 k, the build still runs, it just runs at a different speed.</p>
+</article>
 
 <article class="post" id="v1">
 <p class="when">6 Nov 2026 &middot; v1</p>
@@ -918,7 +935,7 @@ wrdata v5.txt v(4) v(5) v(6)
 <p>Measured off that run with a threshold at 2.0 V on the collector, counted in python rather than with <code>.meas</code>, because <code>.meas</code> miscounts near the switching point.</p>
 
 <h2>What this is not</h2>
-<p>It is not on a board. Nobody has built v5. Every number above is a simulation of the netlist printed above it, and the only version that has run on real copper is v4. If you build v5 and it parks at the slow setting, or it does not park at all, that is a real data point and worth more than my sim.</p>
+<p>The slow setting has run on a real board. As of 9 Nov both extra 10 k are in, the jumper is out, and the ring chases. What the board confirmed is the topology, not the timings: every number on this page above is still a simulation of the netlist printed under it. Nobody has put a stopwatch on a lap by hand yet. If you do, or if your board parks where mine does not, that is a real data point and worth more than my sim.</p>
 
 </article>
 
@@ -951,6 +968,48 @@ wrdata v5.txt v(4) v(5) v(6)
 
 
 </div>
+
+<article class="post card" id="card">
+<p class="when">one sheet, printer optional</p>
+<h2>The build card.</h2>
+<p>Everything you need at the bench, with nothing to read first. Print it, or keep it open on the phone next to the breadboard.</p>
+<p><button type="button" id="printcard" class="copybtn printbtn">print just this sheet</button></p>
+
+<h3>Parts</h3>
+<ul class="check">
+<li>3 &times; 2N2222A or 2N3904 (flat faces you, legs left to right are E, B, C)</li>
+<li>3 &times; LED, any colour, long leg is the anode</li>
+<li>3 &times; 1 k&Omega; (brown black red)</li>
+<li>3 &times; 10 k&Omega; (brown black orange)</li>
+<li>3 &times; 100 &micro;F electrolytic, 16 V or more, stripe is negative</li>
+<li>1 &times; breadboard, 40 columns is enough</li>
+<li>~20 jumper wires</li>
+<li>9 V battery and clip, or the 5 V pin of an Arduino</li>
+</ul>
+
+<h3>Order, and the checks that catch people</h3>
+<ol class="check">
+<li>Three transistors, legs in three <b>different</b> columns. Same column shorts E to B to C and nothing will light.</li>
+<li>A 1 k and an LED in series along a row, from +V to its collector. An LED and a resistor in one column are shorted by the strip.</li>
+<li>Three 10 k from each base to <b>ground</b>. To the positive rail you get two lit and one dark walking around, which is the single most common way this build looks broken and is not.</li>
+<li>Three caps, one hop each: C1 to B2, C2 to B3, C3 to B1. The cap's body must cross the centre gap of the board. Both legs in one strip is a wire, not a capacitor.</li>
+<li>Stripe (negative) toward the base.</li>
+<li>Power <b>last</b>, then switch on.</li>
+</ol>
+
+<h3>What you should see</h3>
+<p>One LED lit, then the next, then the next, with a short dark gap between steps. Not two at once. Not a slow fade. 0.44 s lit, 0.07 s dark, 1.52 s to go round.</p>
+
+<h3>It does not chase</h3>
+<ul>
+<li><b>Two lit, one dark, walking:</b> a base resistor is on the rail. Move all three to ground.</li>
+<li><b>Nothing lights:</b> a cap has both legs in one strip, or a transistor's legs share a column.</li>
+<li><b>One LED lit forever:</b> a cross-couple cap is missing or the wrong way round.</li>
+<li><b>Runs, but one step is slow:</b> that half's base resistor is bigger than the others. The long on-time belongs to the other half.</li>
+<li><b>Dead on 5 V:</b> worth telling me. My sim parks below 5.5 V and the real board does not, and I do not know why yet.</li>
+</ul>
+<p class="small" style="font-size:14px;color:var(--dim)">bench.hardrivetech.net &middot; source and measurements: github.com/Hardrivetech/bench001 &middot; CC BY 4.0, copy it, sell it, no credit needed.</p>
+</article>
 
 <footer class="site">
 <div class="in">
@@ -989,6 +1048,6 @@ wrdata v5.txt v(4) v(5) v(6)
 </div>
 </div>
 </footer>
-<script src="app.js?v=5" defer></script>
+<script src="app.js?v=6" defer></script>
 </body>
 </html>
