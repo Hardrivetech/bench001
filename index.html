@@ -870,7 +870,7 @@ wrdata v4.txt v(4) v(5) v(6)
 <tr><td>30 k</td><td colspan="3">parks. Nothing chases.</td></tr>
 <tr><td>47 k</td><td colspan="3">parks. Nothing chases.</td></tr>
 </table>
-<p>So the honest range is 1.52 s to 2.97 s, about two to one, and then it stops. Not a smooth dial. The stop at 30 k is the same kind of ceiling v2 hit at 100 k: the base cannot be pulled down hard enough to keep the stage switching, so the ring settles instead of chasing. Slow has a limit and it is current.</p>
+<p>So the honest range is 1.52 s to 2.97 s, about two to one, and then it stops. Not a smooth dial. Why it stops: more resistance to ground means the base charge leaks away slower, so each stage holds on longer, and past about 30 k it holds long enough that the next stage never takes over. The ring settles and stops walking. That is my reading of the run, not a proven mechanism, and it is the same shape of ceiling v2 hit at 100 k in series. Slow has a limit.</p>
 <p>All of that is from the netlist at the bottom of this post. If you build it, the numbers you get will be within a cap tolerance of these, and the park point will move with your transistors.</p>
 
 <h2>Parts at the edge of their tolerance</h2>
