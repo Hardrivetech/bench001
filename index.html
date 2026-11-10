@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BENCH 001 — the project log</title>
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 <header class="bar">
@@ -36,7 +36,7 @@
 <a href="#v4"><span class="d">6 Nov</span><div><strong>v4. The ring</strong><span>Built and photographed. Three LEDs, one at a time. Parts, map, triage, netlist.</span></div></a>
 <a href="#v5"><span class="d">9 Nov</span><div><strong>v5. A speed setting</strong><span>Two 10 k and a jumper. 1.52 s to 2.97 s. 30 k and it parks. Simulated, not yet built.</span></div></a>
 <a href="#timing"><span class="d">7 Nov</span><div><strong>The 0.69 constant is wrong here</strong><span>Two-transistor blinker only. The LED moves the timing.</span></div></a>
-<a href="#power"><span class="d">9 Nov</span><div><strong>5 V: the sim and the board disagree</strong><span>7.6 mA a LED. My sim parks at 5.3 V. The real board runs on 5 V.</span></div></a>
+<a href="#power"><span class="d">9 Nov</span><div><strong>5 V: the sim and the board disagree</strong><span>7.6 mA a LED. The netlist was seeded for 9 V and died below it. Fixed. The LED drop is the real floor.</span></div></a>
 </nav>
 
 <article class="post" id="parts">
@@ -833,7 +833,8 @@
 <h2>The netlist, if you want to check my work</h2>
 <p>This is exactly what was simulated. Run it with <code>ngspice -b v4.cir</code> and you get the trace above.</p>
 <pre>* BENCH 001 v4: three-transistor ring chase
-Vcc 1 0 9
+.param VRAIL=9      ; change THIS for another rail, the start seed follows it
+Vcc 1 0 {VRAIL}
 R1 2 0 10k          ; base 1 to ground
 R2 3 0 10k          ; base 2 to ground
 R3 7 0 10k          ; base 3 to ground
@@ -852,13 +853,13 @@ C3 6 2 100u         ; collector 3 to base 1
 .model QN NPN(IS=1e-14 BF=200)
 .model DL D(IS=1e-14 N=1.8 RS=10)
 .options method=gear reltol=1e-3
-.ic V(2)=0.7 V(3)=0 V(7)=0 V(4)=0.2 V(5)=8.4 V(6)=8.4
+.ic V(2)=0.7 V(3)=0 V(7)=0 V(4)=0.2 V(5)={0.85*VRAIL} V(6)={0.85*VRAIL}
 .control
 tran 0.002 10 0 uic
 wrdata v4.txt v(4) v(5) v(6)
 .endc
 .end</pre>
-<p>Two gotchas if you try to reproduce this. The <code>.ic</code> line is not optional: without an unbalanced start the ring sits at a symmetric operating point and never breaks symmetry, so it looks like a bad topology when it is only a missing nudge. And count threshold crossings yourself rather than trusting <code>.meas</code>, which miscounts near the switching point.</p>
+<p>Two gotchas if you try to reproduce this. The <code>.ic</code> line is not optional: without an unbalanced start the ring sits at a symmetric operating point and never breaks symmetry, so it looks like a bad topology when it is only a missing nudge. And count threshold crossings yourself rather than trusting <code>.meas</code>, which miscounts near the switching point. If you try another rail, change <code>.param VRAIL</code>. Do not edit the 9 on the <code>Vcc</code> line alone: the start seed is tied to the rail, and a seed left at 9 V holds the caps above a lower rail and the ring never starts. That is the bug I shipped on 9 Nov and Buddy caught.</p>
 
 <h2>What is next</h2>
 <p>v5 is next: a speed setting for this ring that uses two 10 k and a jumper, both already in the drawer. It is simulated and written up below. This build, the one on this page, is still the only version that has been on a real board. If you build v4 before anything else exists, yours is the one that counts.</p>
@@ -904,7 +905,8 @@ wrdata v4.txt v(4) v(5) v(6)
 <h2>The netlist, slow setting</h2>
 <p>Same ring, with the second resistor drawn in and no jumper. Delete the <code>Rj</code> line and you are back at v4.</p>
 <pre>* BENCH 001 v5: ring with 20k in each base-to-ground path
-Vcc 1 0 9
+.param VRAIL=9      ; change THIS for another rail, the start seed follows it
+Vcc 1 0 {VRAIL}
 Q1 4 2 0 QN
 Q2 5 3 0 QN
 Q3 6 7 0 QN
@@ -926,7 +928,7 @@ C3 6 2 100u
 .model QN NPN(IS=1e-14 BF=200)
 .model DL D(IS=1e-14 N=1.8 RS=10)
 .options method=gear reltol=1e-3
-.ic V(2)=0.7 V(3)=0 V(7)=0 V(4)=0.2 V(5)=8.4 V(6)=8.4
+.ic V(2)=0.7 V(3)=0 V(7)=0 V(4)=0.2 V(5)={0.85*VRAIL} V(6)={0.85*VRAIL}
 .control
 tran 0.002 20 0 uic
 wrdata v5.txt v(4) v(5) v(6)
@@ -958,11 +960,15 @@ wrdata v5.txt v(4) v(5) v(6)
 
 <article class="post" id="power">
 <p class="when">9 Nov 2026 &middot; correction</p>
-<h2 id="power-h">5 V: my simulation and the real board disagree.</h2>
+<h2 id="power-h">5 V: the netlist was seeded for 9 V, and I published it anyway.</h2>
 
-<p>9 V is what the simulation used. Peak current is 7.6 mA per LED, not 15. On the netlist at the bottom the ring still laps at 5.5 V and parks at 5.3 V and below. A harder start kick does not rescue it, so that is not a startup artefact in the model.</p>
+<p>Correction, 9 Nov. Buddy ran my v4 netlist and found what I should have found first. The <code>.ic</code> line charged two caps to 8.4 V, which only means something with a 9 V rail. Change <code>Vcc</code> and nothing else, and the ring is dead at 7.5 V and below. This page told you the real board runs on the Arduino 5 V pin, so anyone lowering the rail would get a dark ring and go hunting a wiring fault that was not there. My bug, in the file, not in your bench.</p>
 
-<p>But the only real board of this build has never run on 9 V at all. It has only ever been on the Arduino 5 V pin, and it chases there. So my model is stricter than the hardware at 5 V and I do not yet know why. Two things I would check before believing either side: the actual voltage on the 5 V pin under load, and the LED forward drop at 7 mA, since the whole margin at low rail is the collector's high level. If your build goes dark on 5 V, that is a real difference and worth telling me. Do not go looking for a wiring fault on my word alone. The rate does move with voltage: 1.52 s a lap at 9 V, about 1.33 s at 6 V.</p>
+<p>The fix is one line: seed the caps as a fraction of the rail. <code>.param VRAIL=9</code>, <code>Vcc 1 0 {VRAIL}</code>, and <code>.ic V(5)={0.85*VRAIL} V(6)={0.85*VRAIL}</code>. With that in, the ring laps from 9 V down to 5.0 V and dies at 4.8 V. The period is 1.52 s a lap at 9 V, 1.46 at 7.5, 1.36 at 6, 1.32 at 5.5, 1.25 at 5.0. Both netlists on this page carry the fix.</p>
+
+<p>So most of the 5 V disagreement I wrote into this page was the seed, not the circuit. What is left is the LED. Hold everything else fixed and change only the diode forward drop: 1.35 V laps down to 4.97 V, 1.56 to 5.31, 1.77 to 5.65, 1.98 to 5.98, 2.20 to 6.32. About 1.6 V of rail per volt of forward drop in this model. The red or orange LED at 5 V has almost nothing left: the model floor sits at 5.0 V, so if your 5 V rail sags under load the ring stops and it is not your wiring. Blue and white want the 9 V battery.</p>
+
+<p>The number I had here before, parked at 5.3 V, was this model with a diode dropping about 1.55 V at 8 mA, not the 1.27 V one in the netlist. Buddy sweep came out higher and steeper than mine (about 3 V of rail per volt of drop); different diode model, same direction. I am not publishing his numbers, but he found the bug, and this table does not exist without that.</p>
 
 </article>
 
@@ -1048,6 +1054,6 @@ wrdata v5.txt v(4) v(5) v(6)
 </div>
 </div>
 </footer>
-<script src="app.js?v=7" defer></script>
+<script src="app.js?v=6" defer></script>
 </body>
 </html>
